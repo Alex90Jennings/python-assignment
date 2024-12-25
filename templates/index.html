@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Users</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .verified {
+            background-color: #dff0d8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fake Users</h1>
+    <label for="filterField">Filter Field:</label>
+    <select id="filterField">
+        <option value="all">All</option>
+        <option value="isVerified">Verified</option>
+        <option value="preferredLanguage">Language</option>
+        <option value="numberOfEsims">Number of eSIMs</option>
+    </select>
+
+    <label for="filterType">Filter Type:</label>
+    <select id="filterType">
+        <option value="equals">Equals</option>
+        <option value="greater">Greater than</option>
+        <option value="less">Less than</option>
+    </select>
+
+    <label for="filterValue">Filter Value:</label>
+    <input type="text" id="filterValue" oninput="filterUsers()">
+
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Verified</th>
+                <th>Location</th>
+                <th>Language</th>
+                <th>eSIMs</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr class="{% if user.isVerified %}verified{% endif %}">
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.isVerified }}</td>
+                    <td>{{ user.currentLocation }}</td>
+                    <td>{{ user.preferredLanguage }}</td>
+                    <td>{{ user.numberOfEsims }}</td>
+                    <td>{{ user.createdAt }}</td>
+                    <td>{{ user.updatedAt }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function filterUsers() {
+            var field = document.getElementById('filterField').value;
+            var type = document.getElementById('filterType').value;
+            var value = document.getElementById('filterValue').value;
+            var rows = document.querySelectorAll('#usersTable tbody tr');
+
+            rows.forEach(function(row) {
+                var isVerified = row.querySelector('td:nth-child(4)').textContent === 'True';
+                var language = row.querySelector('td:nth-child(6)').textContent;
+                var esimCount = parseInt(row.querySelector('td:nth-child(7)').textContent);
+
+                row.style.display = ''; // Reset display for all rows
+
+                if (field === 'isVerified') {
+                    var filterValue = value.toLowerCase() === 'true';
+                    if (type === 'equals' && isVerified !== filterValue) {
+                        row.style.display = 'none';
+                    }
+                } else if (field === 'preferredLanguage') {
+                    if (type === 'equals' && language.toLowerCase() !== value.toLowerCase()) {
+                        row.style.display = 'none';
+                    }
+                } else if (field === 'numberOfEsims') {
+                    var filterValue = parseInt(value);
+                    if (type === 'equals' && esimCount !== filterValue) {
+                        row.style.display = 'none';
+                    } else if (type === 'greater' && esimCount <= filterValue) {
+                        row.style.display = 'none';
+                    } else if (type === 'less' && esimCount >= filterValue) {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

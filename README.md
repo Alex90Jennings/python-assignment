@@ -1,3 +1,3 @@
 # python-assignment
 
-test push
+python app.py
