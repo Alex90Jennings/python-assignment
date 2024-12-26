@@ -24,23 +24,21 @@
 </head>
 <body>
     <h1>Fake Users</h1>
+    <button onclick="location.href='/'">Back to Main Menu</button>
+
     <label for="filterField">Filter Field:</label>
-    <select id="filterField">
+    <select id="filterField" onchange="updateFilterOptions()">
         <option value="all">All</option>
         <option value="isVerified">Verified</option>
         <option value="preferredLanguage">Language</option>
         <option value="numberOfEsims">Number of eSIMs</option>
     </select>
 
-    <label for="filterType">Filter Type:</label>
-    <select id="filterType">
-        <option value="equals">Equals</option>
-        <option value="greater">Greater than</option>
-        <option value="less">Less than</option>
-    </select>
+    <label for="filterType" style="display: none;">Filter Type:</label>
+    <select id="filterType" style="display: none;"></select>
 
-    <label for="filterValue">Filter Value:</label>
-    <input type="text" id="filterValue" oninput="filterUsers()">
+    <label for="filterValue" style="display: none;">Filter Value:</label>
+    <input type="text" id="filterValue" style="display: none;" oninput="filterUsers()">
 
     <table id="usersTable">
         <thead>
@@ -74,6 +72,54 @@
     </table>
 
     <script>
+        function updateFilterOptions() {
+            var field = document.getElementById('filterField').value;
+            var filterType = document.getElementById('filterType');
+            var filterValueLabel = document.getElementById('filterValue');
+            var filterValueInput = document.getElementById('filterValue');
+            var filterTypeLabel = document.getElementById('filterType').previousElementSibling;
+
+            filterType.style.display = 'none';
+            filterTypeLabel.style.display = 'none';
+            filterValueInput.style.display = 'none';
+            filterValueLabel.style.display = 'none';
+            filterType.innerHTML = '';
+
+            if (field === 'isVerified') {
+                filterType.style.display = 'block';
+                filterTypeLabel.style.display = 'block';
+                filterType.innerHTML = `
+                    <option value="equals">Equals</option>
+                `;
+                filterValueLabel.style.display = 'block';
+                filterValueInput.style.display = 'block';
+                filterValueInput.setAttribute('type', 'text');
+                filterValueInput.value = '';
+            } else if (field === 'numberOfEsims') {
+                filterType.style.display = 'block';
+                filterTypeLabel.style.display = 'block';
+                filterType.innerHTML = `
+                    <option value="equals">Equals</option>
+                    <option value="greater">Greater than</option>
+                    <option value="less">Less than</option>
+                `;
+                filterValueLabel.style.display = 'block';
+                filterValueInput.style.display = 'block';
+                filterValueInput.setAttribute('type', 'number');
+                filterValueInput.value = '';
+            } else if (field === 'preferredLanguage') {
+                filterType.style.display = 'block';
+                filterTypeLabel.style.display = 'block';
+                filterType.innerHTML = `
+                    <option value="equals">Equals</option>
+                `;
+                filterValueLabel.style.display = 'block';
+                filterValueInput.style.display = 'block';
+                filterValueInput.setAttribute('type', 'text');
+                filterValueInput.value = '';
+            }
+        }
+
         function filterUsers() {
             var field = document.getElementById('filterField').value;
             var type = document.getElementById('filterType').value;
