@@ -15,7 +15,8 @@ def print_separator(symbol, length=158):
     print(symbol * length)
 
 def print_employee_details(employee, index):
-    return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{employee.get('dietPreferences', 'N/A')}"
+    diet_prefs = ", ".join(employee.get('dietPreferences', []))
+    return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{diet_prefs}"
 
 def get_employees():
     employees = list(collection.find())
@@ -52,6 +53,8 @@ def is_valid_name(name):
 def is_valid_email(email):
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         return False, "Invalid email format."
+    if not 6 <= len(email) <= 35:
+        return False, "Name must be between 6 and 35 characters long."
     if collection.find_one({"email": email}):
         return False, "Email must be unique."
     return True, ""
@@ -82,7 +85,7 @@ def is_valid_diet_preference(value):
     return True, ""
 
 def create_employee():
-    print("\nCreate New Employee")
+    print("\nCreate New Employee\n")
     
     first_name = input("Enter First Name: ").strip()
     last_name = input("Enter Last Name: ").strip()
@@ -128,7 +131,7 @@ def create_employee():
     }
 
     collection.insert_one(employee)
-    print(f"\nEmployee {first_name} {last_name} created successfully!")
+    print(f"\nEmployee with {email} created successfully!")
 
 def select_diet_preferences():
     print("\nAvailable Diet Preferences:")
@@ -150,7 +153,7 @@ def select_diet_preferences():
     return []
 
 def update_options():
-    print("\nWhat would you like to update?")
+    print("\nWhat would you like to update?\n")
     print("1. First Name")
     print("2. Last Name")
     print("3. Email")
@@ -158,14 +161,16 @@ def update_options():
     print("5. Active")
     print("6. Salary")
     print("7. Annual Leave")
-    print("8. Diet Preferences")
+    print("8. Diet Preferences\n")
 
 def update_employee():
     employees = get_employees()
     if not employees:
         print("\nNo employees found.")
         return
+    print("\n")
     display_employees()
+    print("\n")
     try:
         index = int(input("\nEnter the index of the employee to update: ")) - 1
         if index < 0 or index >= len(employees):
@@ -231,7 +236,7 @@ def delete_employee():
         return
     display_employees()
     try:
-        index = int(input("\nEnter the index of the employee to delete: ")) - 1
+        index = int(input("\nEnter the index of the employee to delete: \n")) - 1
         if index < 0 or index >= len(employees):
             print("Invalid index. Please try again.")
             return
@@ -242,25 +247,27 @@ def delete_employee():
         print("Invalid input. Please enter a valid number.")
 
 def display_single_employee(employee, index):
-    print("\nEmployee Details:")
-    print(f"Index: {index}")
+    print("\nEmployee Details:\n")
     print_employee_details(employee, index)
 
 def display_employees():
+    print("\n")
     print(get_table_headers())
+    print_separator("-")
     employees = get_employees()
     for idx, employee in enumerate(employees, start=1):
         print(print_employee_details(employee, idx))
 
 def main_options():
+    print("\n")
     print_separator("-")
-    print("Employee Management System")
+    print("Employee Management System - Main Menu")
     print_separator("-")
-    print("1. Create Employee")
+    print("\n1. Create Employee")
     print("2. View All Employees")
     print("3. Update Employee")
     print("4. Delete Employee")
-    print("5. Exit")
+    print("5. Exit\n")
 
 def main():
     while True:
@@ -276,11 +283,12 @@ def main():
             elif choice == "4":
                 delete_employee()
             elif choice == "5":
+                print("\nExiting the program...")
                 break
             else:
                 print("Invalid choice. Please try again.")
         except KeyboardInterrupt:
-            print("\nExiting the program...")  # Custom exit message
+            print("\nExiting the program...")
             break
 
 if __name__ == "__main__":
