@@ -46,7 +46,31 @@ def is_valid_email(email):
         return False, "Email must be unique."
     return True, ""
 
-def is_valid_number(value):
+def is_valid_salary(value, isFullTime):
+    try:
+        is_valid_positive_number(value)
+        if isFullTime and value <= 20000:
+            return False, "Full time employees must earn more than 20000."
+        if not isFullTime and value < 10000:
+            return False, "Full time employees must earn more than 10000."
+        return True, ""
+    except ValueError:
+        return False, "Value must be a number."
+    
+def is_valid_leave_days(value):
+    try:
+        is_valid_positive_number(value)
+        if value <= 0:
+            return False, "Number must be positive."
+        if value < 10:
+            return False, "Annual leave days should be above 10."
+        if value > 30:
+            return False, "Annual leave days should be below 30."
+        return True, ""
+    except ValueError:
+        return False, "Value must be a number."
+
+def is_valid_positive_number(value):
     try:
         num = float(value)
         if num <= 0:
@@ -181,8 +205,14 @@ def update_employee():
                 print(message)
                 return
 
-        elif update_field == "salary" or update_field == "annualLeaveDays":
-            is_valid, message = is_valid_number(new_value)
+        elif update_field == "annualLeaveDays":
+            is_valid, message = is_valid_leave_days(new_value)
+            if not is_valid:
+                print(message)
+                return
+            
+        elif update_field == "salary":
+            is_valid, message = is_valid_salary(new_value, employee.get('isFullTime'))
             if not is_valid:
                 print(message)
                 return
