@@ -56,9 +56,9 @@ def is_valid_number(value):
         return False, "Value must be a number."
 
 def is_valid_boolean(value):
-    if value.lower() not in ['true', 'false']:
-        return False, "Must be either 'true', 'false', 'yes', or 'no'."
-    return True, ""
+    if isinstance(value, bool):
+        return True, ""
+    return False, "Must be either 'true', 'false'"
 
 def is_valid_diet_preference(value):
     if value not in diet_preferences:
@@ -192,7 +192,6 @@ def update_employee():
             if not is_valid:
                 print(message)
                 return
-            new_value = new_value.lower() in ['true']
 
         elif update_field == "dietPreferences":
             for preference in new_value:
