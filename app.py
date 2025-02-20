@@ -11,6 +11,17 @@ collection = db["users"]
 
 DIET_PREFERENCES = ["Vegan", "Vegetarian", "Halal", "Kosher", "Paleo", "Gluten-Free", "Dairy-Free", "Low-Carb", "Keto"]
 
+class ReturnToMenuException(Exception):
+    """Custom exception to return to the main menu."""
+    pass
+
+def get_input(prompt):
+    """Get user input and raise ReturnToMenuException if ':menu' is entered."""
+    user_input = input(prompt).strip()
+    if user_input.lower() == ":menu":
+        raise ReturnToMenuException
+    return user_input
+
 def print_separator(symbol, length=158):
     print(symbol * length)
 
@@ -87,9 +98,9 @@ def is_valid_diet_preference(value):
 def create_employee():
     print("\nCreate New Employee\n")
     
-    first_name = input("Enter First Name: ").strip()
-    last_name = input("Enter Last Name: ").strip()
-    email = input("Enter Email: ").strip()
+    first_name = get_input("Enter First Name: ").strip()
+    last_name = get_input("Enter Last Name: ").strip()
+    email = get_input("Enter Email: ").strip()
 
     if not (valid := is_valid_name(first_name))[0]:
         print(valid[1])
@@ -101,18 +112,18 @@ def create_employee():
         print(valid[1])
         return
 
-    is_full_time = input("Is the employee full-time? (true/false): ").strip().lower()
+    is_full_time = get_input("Is the employee full-time? (true/false): ").strip().lower()
     if is_full_time not in ["true", "false"]:
         print("Invalid input. Please enter 'true' or 'false'.")
         return
     is_full_time = is_full_time == "true"
 
-    salary = input(f"Enter Salary for {first_name} {last_name}: ").strip()
+    salary = get_input(f"Enter Salary for {first_name} {last_name}: ").strip()
     if not (valid := is_valid_salary(salary, is_full_time))[0]:
         print(valid[1])
         return
 
-    annual_leave = input("Enter Annual Leave Days: ").strip()
+    annual_leave = get_input("Enter Annual Leave Days: ").strip()
     if not (valid := is_valid_leave_days(annual_leave))[0]:
         print(valid[1])
         return
@@ -138,7 +149,7 @@ def select_diet_preferences():
     for i, preference in enumerate(DIET_PREFERENCES, start=1):
         print(f"{i}. {preference}")
     
-    user_input = input("Enter the numbers of diet preferences (separate by commas, up to 2): ").strip()
+    user_input = get_input("Enter the numbers of diet preferences (separate by commas, up to 2): ").strip()
     if user_input:
         try:
             selected_numbers = [int(num.strip()) for num in user_input.split(',')]
@@ -172,14 +183,14 @@ def update_employee():
     display_employees()
     print("\n")
     try:
-        index = int(input("\nEnter the index of the employee to update: ")) - 1
+        index = int(get_input("\nEnter the index of the employee to update: ")) - 1
         if index < 0 or index >= len(employees):
             print("Invalid index. Please try again.")
             return
         employee = employees[index]
         display_single_employee(employee, index + 1)
         update_options()
-        choice = input("Enter the number of the attribute to update: ")
+        choice = get_input("Enter the number of the attribute to update: ")
 
         update_field = map_update_choice_to_field(choice)
         if not update_field:
@@ -204,13 +215,13 @@ def get_new_value(update_field):
     if update_field == "dietPreferences":
         return select_diet_preferences()
     elif update_field == "isFullTime" or update_field == "isActive":
-        new_value = input(f"Enter the new value for {update_field} (true/false): ").strip().lower()
+        new_value = get_input(f"Enter the new value for {update_field} (true/false): ").strip().lower()
         if new_value not in ["true", "false"]:
             print("Invalid input. Please enter 'true' or 'false'.")
             return None
         return new_value == "true"
     else:
-        new_value = input(f"Enter the new value for {update_field}: ").strip()
+        new_value = get_input(f"Enter the new value for {update_field}: ").strip()
         if update_field == "salary" or update_field == "annualLeaveDays":
             return round(float(new_value))
         else:
@@ -236,7 +247,7 @@ def delete_employee():
         return
     display_employees()
     try:
-        index = int(input("\nEnter the index of the employee to delete: \n")) - 1
+        index = int(get_input("\nEnter the index of the employee to delete: \n")) - 1
         if index < 0 or index >= len(employees):
             print("Invalid index. Please try again.")
             return
@@ -287,6 +298,9 @@ def main():
                 break
             else:
                 print("Invalid choice. Please try again.")
+        except ReturnToMenuException:
+            print("\nReturning to the main menu...\n")
+            continue
         except KeyboardInterrupt:
             print("\nExiting the program...")
             break
