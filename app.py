@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
-
+from bson import ObjectId
 load_dotenv()
 
 uri = os.getenv('MONGO_URI')
@@ -20,30 +20,34 @@ def get_employees():
         employee['_id'] = str(employee['_id'])
     return employees
 
+def get_table_headers():
+    return f"{'Index':<8}{'First Name':<15}{'Last Name':<15}{'Email':<40}{'Full Time':<14}{'Active':<10}{'Salary (£)':<14}{'Annual Leave':<15}{'Diet Preferences'}"
+
+def print_separator(symbol, length=158):
+    print(symbol * length)
+
+def print_employee_details(employee, index):
+    return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{employee.get('dietPreferences', 'N/A')}"
+
 def display_employees():
     employees = get_employees()
     if not employees:
         print("\nNo employees found.")
         return
-
     print("\nCompany Employee List")
-    print("=" * 150)
-    print(f"{'Index':<8}{'First Name':<15}{'Last Name':<15}{'Email':<40}{'Full Time':<10}{'Active':<10}{'Salary (£)':<10}{'Annual Leave':<15}{'Diet Preferences'}")
-    print("-" * 150)
-    
+    print_separator("=")
+    print(get_table_headers())
+    print_separator("-")
     for index, emp in enumerate(employees, start=1):
-        print(f"{index:<8}{emp.get('firstName', 'N/A'):<15}{emp.get('lastName', 'N/A'):<15}{emp.get('email', 'N/A'):<40}{str(emp.get('isFullTime', 'N/A')):<10}{str(emp.get('isActive', 'N/A')):<10}{str(emp.get('salary', 'N/A')):<10}{str(emp.get('annualLeaveDays', 'N/A')):<15}{emp.get('dietPreferences', 'N/A')}")
+        print(print_employee_details(emp, index))
 
 def display_single_employee(employee, index):
-    """Displays a single employee in table format."""
     print("\nSelected Employee for Deletion")
-    print("=" * 150)
-    print(f"{'Index':<8}{'First Name':<15}{'Last Name':<15}{'Email':<40}{'Full Time':<10}{'Active':<10}{'Salary (£)':<10}{'Annual Leave':<15}{'Diet Preferences'}")
-    print("-" * 150)
-    print(f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<10}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<10}{str(employee.get('annualLeaveDays', 'N/A')):<15}{employee.get('dietPreferences', 'N/A')}")
-    print("-" * 150)
-
-from bson import ObjectId  # Import ObjectId from bson
+    print_separator("=")
+    print(get_table_headers())
+    print_separator("-")
+    print(print_employee_details(employee, index))
+    print_separator("-")
 
 def delete_employee():
     employees = get_employees()
@@ -74,7 +78,6 @@ def main():
         print("2. Delete Employee")
         print("3. Exit")
         choice = input("Enter your choice: ")
-        
         if choice == "1":
             display_employees()
         elif choice == "2":
