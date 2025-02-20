@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import ObjectId
@@ -29,6 +30,41 @@ def print_separator(symbol, length=158):
 def print_employee_details(employee, index):
     return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{employee.get('dietPreferences', 'N/A')}"
 
+def is_valid_name(name):
+    if not name:
+        return False, "Name cannot be empty."
+    if not name.isalpha():
+        return False, "Name must contain only letters."
+    if not 2 <= len(name) <= 15:
+        return False, "Name must be between 2 and 15 characters long."
+    return True, ""
+
+def is_valid_email(email):
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return False, "Invalid email format."
+    if collection.find_one({"email": email}):
+        return False, "Email must be unique."
+    return True, ""
+
+def is_valid_number(value):
+    try:
+        num = float(value)
+        if num <= 0:
+            return False, "Number must be positive."
+        return True, ""
+    except ValueError:
+        return False, "Value must be a number."
+
+def is_valid_boolean(value):
+    if value.lower() not in ['true', 'false']:
+        return False, "Must be either 'true', 'false', 'yes', or 'no'."
+    return True, ""
+
+def is_valid_diet_preference(value):
+    if value not in diet_preferences:
+        return False, f"Diet preference must be one of: {', '.join(diet_preferences)}."
+    return True, ""
+
 def display_employees():
     employees = get_employees()
     if not employees:
@@ -42,34 +78,12 @@ def display_employees():
         print(print_employee_details(emp, index))
 
 def display_single_employee(employee, index):
-    print("\nSelected Employee for Deletion")
+    print("\nSelected Employee for Update")
     print_separator("=")
     print(get_table_headers())
     print_separator("-")
     print(print_employee_details(employee, index))
     print_separator("-")
-
-def delete_employee():
-    employees = get_employees()
-    if not employees:
-        print("\nNo employees found.")
-        return
-    display_employees()
-    try:
-        index = int(input("\nEnter the index of the employee to delete: ")) - 1
-        if index < 0 or index >= len(employees):
-            print("Invalid index. Please try again.")
-            return
-        employee = employees[index]
-        display_single_employee(employee, index + 1)
-        confirm = input("Are you sure you want to delete this employee? (yes/no): ").strip().lower()
-        if confirm == "yes":
-            collection.delete_one({"_id": ObjectId(employee["_id"])})
-            print("\nEmployee deleted successfully!")
-        else:
-            print("\nDeletion cancelled.")
-    except ValueError:
-        print("Invalid input. Please enter a valid number.")
 
 def update_employee():
     employees = get_employees()
@@ -117,17 +131,75 @@ def update_employee():
             print("Invalid choice.")
             return
 
-        new_value = input(f"Enter the new value for {update_field}: ").strip()
+        if update_field == "dietPreferences":
+            print("\nAvailable Diet Preferences:")
+            for i, preference in enumerate(diet_preferences, start=1):
+                print(f"{i}. {preference}")
+            user_input = input("\nEnter the numbers of your diet preferences, separated by commas (up to 2): ").strip()
 
-        if update_field == "isFullTime" or update_field == "isActive":
-            new_value = new_value.lower() == 'yes'
+            if user_input == "":
+                new_value = []
+                print("No diet preferences selected.")
+            else:
+                try:
+                    selected_numbers = [int(num.strip()) for num in user_input.split(',')]
+                    if len(selected_numbers) < 0 or len(selected_numbers) > 2:
+                        print("You must select between 0 and 2 preferences.")
+                        return
+                    selected_preferences = []
+                    for num in selected_numbers:
+                        if 1 <= num <= len(diet_preferences):
+                            selected_preferences.append(diet_preferences[num - 1])
+                        else:
+                            print(f"Invalid number {num}. Please select a valid number between 1 and {len(diet_preferences)}.")
+                            return
+                    new_value = selected_preferences
+                    print(new_value)
+                except ValueError:
+                    print("Invalid input. Please enter valid numbers.")
+                    return
 
-        if update_field == "salary" or update_field == "annualLeaveDays":
-            try:
-                new_value = float(new_value) if update_field == "salary" else int(new_value)
-            except ValueError:
-                print(f"Invalid value for {update_field}. Please enter a valid number.")
+        elif update_field == "isFullTime" or update_field == "isActive":
+            new_value = input(f"Enter the new value for {update_field} (true/false): ").strip().lower()
+            if new_value not in ["true", "false"]:
+                print("Invalid input. Please enter 'true' or 'false'.")
                 return
+            new_value = new_value in ["true"]
+
+        else:
+            new_value = input(f"Enter the new value for {update_field}: ").strip()
+
+        if update_field == "firstName" or update_field == "lastName":
+            is_valid, message = is_valid_name(new_value)
+            if not is_valid:
+                print(message)
+                return
+
+        elif update_field == "email":
+            is_valid, message = is_valid_email(new_value)
+            if not is_valid:
+                print(message)
+                return
+
+        elif update_field == "salary" or update_field == "annualLeaveDays":
+            is_valid, message = is_valid_number(new_value)
+            if not is_valid:
+                print(message)
+                return
+
+        elif update_field == "isFullTime" or update_field == "isActive":
+            is_valid, message = is_valid_boolean(new_value)
+            if not is_valid:
+                print(message)
+                return
+            new_value = new_value.lower() in ['true']
+
+        elif update_field == "dietPreferences":
+            for preference in new_value:
+                is_valid, message = is_valid_diet_preference(preference)
+                if not is_valid:
+                    print(message)
+                    return
 
         collection.update_one(
             {"_id": ObjectId(employee["_id"])},
@@ -138,20 +210,42 @@ def update_employee():
     except ValueError:
         print("Invalid input. Please enter a valid number.")
 
+def delete_employee():
+    employees = get_employees()
+    if not employees:
+        print("\nNo employees found.")
+        return
+    display_employees()
+    try:
+        index = int(input("\nEnter the index of the employee to delete: ")) - 1
+        if index < 0 or index >= len(employees):
+            print("Invalid index. Please try again.")
+            return
+        employee = employees[index]
+        display_single_employee(employee, index + 1)
+        confirm = input("Are you sure you want to delete this employee? (yes/no): ").strip().lower()
+        if confirm == "yes":
+            collection.delete_one({"_id": ObjectId(employee["_id"])})
+            print("\nEmployee deleted successfully!")
+        else:
+            print("\nDeletion cancelled.")
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+
 def main():
     while True:
         print("\nMain Menu")
         print("1. View Employees")
-        print("2. Update Employee")
-        print("3. Delete Employee")
+        print("2. Delete Employee")
+        print("3. Update Employee")
         print("4. Exit")
         choice = input("Enter your choice: ")
         if choice == "1":
             display_employees()
         elif choice == "2":
-            update_employee()
-        elif choice == "3":
             delete_employee()
+        elif choice == "3":
+            update_employee()
         elif choice == "4":
             print("Exiting application. Goodbye!")
             break
