@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fake Users</title>
+    <title>Company Employee Table</title>
     <style>
         table {
             width: 100%;
@@ -25,7 +25,7 @@
     </style>
 </head>
 <body>
-    <h1>Users</h1>
+    <h1>Employees</h1>
     <button onclick="location.href='/'">Back to Main Menu</button>
 
     <label for="filterField">Filter Field:</label>
@@ -40,41 +40,42 @@
     <select id="filterType" style="display: none;"></select>
 
     <label for="filterValue" style="display: none;">Filter Value:</label>
-    <input type="text" id="filterValue" style="display: none;" oninput="filterUsers()">
+    <input type="text" id="filterValue" style="display: none;" oninput="filteremployees()">
 
-    <table id="usersTable">
+    <table id="employeesTable">
         <thead>
             <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
-                <th>Verified</th>
-                <th>Location</th>
-                <th>Language</th>
-                <th>eSIMs</th>
-                <th>Created At</th>
-                <th>Updated At</th>
+                <th>Is Full Time?</th>
+                <th>Is Active?</th>
+                <th>Salary (£)</th>
+                <th>Annual Leave Days</th>
+                <th>Diet Preferences</th>
+                <th>Phone Number</th>
+                <th>Date Of Birth</th>
             </tr>
         </thead>
-        <tbody id="usersTableBody">
+        <tbody id="employeesTableBody">
             <!-- Rows will be inserted here by JavaScript -->
         </tbody>
     </table>
 
     <script>
-        const users = [
-            {% for user in users %}
+        const employees = [
+            {% for employee in employees %}
                 {
-                    _id: "{{ user._id }}",
-                    firstName: "{{ user.firstName }}",
-                    lastName: "{{ user.lastName }}",
-                    email: "{{ user.email }}",
-                    isVerified: "{{ user.isVerified }}",
-                    currentLocation: "{{ user.currentLocation }}",
-                    preferredLanguage: "{{ user.preferredLanguage }}",
-                    numberOfEsims: "{{ user.numberOfEsims }}",
-                    createdAt: new Date("{{ user.createdAt }}"),
-                    updatedAt: new Date("{{ user.updatedAt }}")
+                    firstName: "{{ employee.firstName }}",
+                    lastName: "{{ employee.lastName }}",
+                    email: "{{ employee.email }}",
+                    isFullTime: "{{ employee.isFullTime }}",
+                    isActive: "{{ employee.isActive }}",
+                    salary: "{{ employee.salary }}",
+                    annualLeaveDays: "{{ employee.annualLeaveDays }}",
+                    dietPreferences: "{{ employee.dietPreferences }}",
+                    phoneNumber: "{{ employee.phoneNumber }}",
+                    dateOfBirth: new Date("{{ employee.dateOfBirth }}")
                 },
             {% endfor %}
         ];
@@ -86,27 +87,28 @@
             return `${day}/${month}/${year}`;
         }
 
-        function renderUsersTable() {
-            const tableBody = document.getElementById('usersTableBody');
+        function renderemployeesTable() {
+            const tableBody = document.getElementById('employeesTableBody');
             tableBody.innerHTML = '';
 
-            users.sort((a, b) => b.createdAt - a.createdAt);
+            employees.sort((a, b) => b.createdAt - a.createdAt);
 
-            users.forEach(user => {
+            employees.forEach(employee => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${user.firstName}</td>
-                    <td>${user.lastName}</td>
-                    <td>${user.email}</td>
-                    <td>${user.isVerified}</td>
-                    <td>${user.currentLocation}</td>
-                    <td>${user.preferredLanguage}</td>
-                    <td>${user.numberOfEsims}</td>
-                    <td>${formatDate(user.createdAt)}</td>
-                    <td>${formatDate(user.updatedAt)}</td>
+                    <td>${employee.firstName}</td>
+                    <td>${employee.lastName}</td>
+                    <td>${employee.email}</td>
+                    <td>${employee.isFullTime}</td>
+                    <td>${employee.isActive}</td>
+                    <td>${employee.salary}</td>
+                    <td>${employee.annualLeaveDays}</td>
+                    <td>${employee.dietPreferences}</td>
+                    <td>${employee.phoneNumber}</td>
+                    <td>${formatDate(employee.dateOfBirth)}</td>
                 `;
                 row.addEventListener('click', () => {
-                    window.location.href = `user-details?_id=${user._id}`;
+                    window.location.href = `employee-details?email=${employee.email}`;
                 });
                 tableBody.appendChild(row);
             });
@@ -160,11 +162,11 @@
             }
         }
 
-        function filterUsers() {
+        function filteremployees() {
             var field = document.getElementById('filterField').value;
             var type = document.getElementById('filterType').value;
             var value = document.getElementById('filterValue').value;
-            var rows = document.querySelectorAll('#usersTable tbody tr');
+            var rows = document.querySelectorAll('#employeesTable tbody tr');
 
             rows.forEach(function(row) {
                 var isVerified = row.querySelector('td:nth-child(4)').textContent === 'True';
@@ -195,7 +197,7 @@
             });
         }
 
-        window.onload = renderUsersTable;
+        window.onload = renderemployeesTable;
     </script>
 </body>
 </html>
