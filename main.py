@@ -84,14 +84,11 @@ def fetch_and_display_employees():
     if not employees:
         print("\nNo employees found.")
         return
-    
     display_employees(employees)
-    
     index = int(get_input("\nEnter the index of the employee to focus on: ")) - 1
     if index < 0 or index >= len(employees):
         print("Invalid index. Please try again.")
         return
-
     display_single_employee(employees[index], index + 1)
 
 

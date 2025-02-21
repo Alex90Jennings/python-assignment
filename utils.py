@@ -1,6 +1,5 @@
 from consts import diet_preferences
 
-
 class ReturnToMenuException(Exception):
     pass
 

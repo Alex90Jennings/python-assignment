@@ -2,7 +2,6 @@ import re
 from api import get_employee
 from consts import diet_preferences
 
-
 def is_valid_name(name):
     if not name:
         return False, "Name cannot be empty."
@@ -22,7 +21,7 @@ def is_valid_email(email):
     return True, ""
 
 def is_valid_salary(value, is_full_time):
-    is_valid, message = is_valid_positive_number(value)
+    is_valid, message = is_valid_positive_whole_number(value)
     if not is_valid:
         return False, message
     if is_full_time and float(value) <= 20000:
@@ -32,7 +31,7 @@ def is_valid_salary(value, is_full_time):
     return True, ""
 
 def is_valid_leave_days(value):
-    is_valid, message = is_valid_positive_number(value)
+    is_valid, message = is_valid_positive_whole_number(value)
     if not is_valid:
         return False, message
     if float(value) < 10:
@@ -51,11 +50,13 @@ def is_valid_boolean(value):
         return True, ""
     return False, "Must be either 'true', 'false'"
 
-def is_valid_positive_number(value):
+def is_valid_positive_whole_number(value):
     try:
         num = float(value)
         if num <= 0:
             return False, "Number must be positive."
+        if not num.is_integer():
+            return False, "Number must be a whole number."
         return True, ""
     except ValueError:
         return False, "Value must be a number."
