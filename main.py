@@ -1,7 +1,7 @@
 from api import del_employee, find_and_update_employee, get_employees, insert_employee
 from console import display_employees, display_single_employee, main_options, update_options
 from utils import ReturnToMenuException, get_input, get_new_value, map_update_choice_to_field, select_diet_preferences, get_valid_choice, get_valid_index, get_valid_input
-from validators import is_valid_email, is_valid_leave_days, is_valid_name, is_valid_salary
+from validators import is_valid_email, is_valid_employee, is_valid_leave_days, is_valid_name, is_valid_salary
 
 def main_menu():
     while True:
@@ -29,10 +29,15 @@ def main_menu():
             break
 
 def fetch_and_display_employees():
-    employees = get_employees()
-    if not employees:
+    fetched_employees = get_employees()
+    if not fetched_employees:
         print("\nNo employees found.")
         return
+    employees = []
+    for employee in fetched_employees:
+        valid_employee = is_valid_employee(employee)
+        if valid_employee:
+            employees.append(valid_employee)
     display_employees(employees)
     while True:
         user_input = get_input("\nEnter the index of the employee to focus on: ").strip()
@@ -72,10 +77,15 @@ def create_employee():
 
 
 def update_employee():
-    employees = get_employees()
-    if not employees:
+    fetched_employees = get_employees()
+    if not fetched_employees:
         print("\nNo employees found.")
         return
+    employees = []
+    for employee in fetched_employees:
+        valid_employee = is_valid_employee(employee)
+        if valid_employee:
+            employees.append(valid_employee)
     display_employees(employees)
     index = get_valid_index("\nEnter the index of the employee to update: ", employees)
     employee = employees[index]
@@ -93,11 +103,15 @@ def update_employee():
 
 
 def delete_employee():
-    employees = get_employees()
-    if not employees:
+    fetched_employees = get_employees()
+    if not fetched_employees:
         print("\nNo employees found.")
         return
-
+    employees = []
+    for employee in fetched_employees:
+        valid_employee = is_valid_employee(employee)
+        if valid_employee:
+            employees.append(valid_employee)
     display_employees(employees)
     index = get_valid_index("\nEnter the index of the employee to delete: ", employees)
 
