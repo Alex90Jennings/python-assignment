@@ -28,7 +28,7 @@ def main_menu():
             print("\nExiting the program...\n")
             break
 
-def fetch_and_display_employees():
+def get_valid_employees():
     fetched_employees = get_employees()
     if not fetched_employees:
         print("\nNo employees found.")
@@ -38,6 +38,10 @@ def fetch_and_display_employees():
         valid_employee = is_valid_employee(employee)
         if valid_employee:
             employees.append(valid_employee)
+    return employees
+
+def fetch_and_display_employees():
+    employees = get_valid_employees()
     display_employees(employees)
     while True:
         user_input = get_input("\nEnter the index of the employee to focus on: ").strip()
@@ -60,7 +64,6 @@ def create_employee():
     salary = round(float(get_valid_input(f"Enter Salary for {first_name} {last_name}: ", lambda v: is_valid_salary(v))))
     annual_leave = round(float(get_valid_input("Enter Annual Leave Days: ", is_valid_leave_days)))
     diet_preferences = select_diet_preferences()
-
     employee = {
         "firstName": first_name,
         "lastName": last_name,
@@ -71,21 +74,15 @@ def create_employee():
         "annualLeaveDays": annual_leave,
         "dietPreferences": diet_preferences
     }
-
-    insert_employee(employee)
-    print(f"\nEmployee with {email} created successfully!")
-
+    valid_employee = is_valid_employee(employee)
+    if employee:
+        insert_employee(valid_employee)
+        print(f"\nEmployee with {email} created successfully!")
+    else:
+        print(f"\nEmployee could not be added")
 
 def update_employee():
-    fetched_employees = get_employees()
-    if not fetched_employees:
-        print("\nNo employees found.")
-        return
-    employees = []
-    for employee in fetched_employees:
-        valid_employee = is_valid_employee(employee)
-        if valid_employee:
-            employees.append(valid_employee)
+    employees = get_valid_employees()
     display_employees(employees)
     index = get_valid_index("\nEnter the index of the employee to update: ", employees)
     employee = employees[index]
@@ -103,18 +100,9 @@ def update_employee():
 
 
 def delete_employee():
-    fetched_employees = get_employees()
-    if not fetched_employees:
-        print("\nNo employees found.")
-        return
-    employees = []
-    for employee in fetched_employees:
-        valid_employee = is_valid_employee(employee)
-        if valid_employee:
-            employees.append(valid_employee)
+    employees = get_valid_employees()
     display_employees(employees)
     index = get_valid_index("\nEnter the index of the employee to delete: ", employees)
-
     employee = employees[index]
     del_employee(employee["_id"])
     print(f"\nEmployee {employee['email']} deleted successfully!")

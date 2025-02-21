@@ -70,10 +70,8 @@ def is_valid_employee(employee):
         "annualLeaveDays": (is_valid_leave_days, "annualLeaveDays"),
         "dietPreferences": (is_valid_diet_preference, "dietPreferences")
     }
-
     for field, (validator, field_name) in validations.items():
         if not validator(employee.get(field)):
             print(f"Employee with {employee.get('_id', 'unknown ID')} could not be loaded, as {field_name} was not in the correct format.")
             return None
-
     return employee
