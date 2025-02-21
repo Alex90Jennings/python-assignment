@@ -20,13 +20,11 @@ def is_valid_email(email):
         return False, "Email must be unique."
     return True, ""
 
-def is_valid_salary(value, is_full_time):
+def is_valid_salary(value):
     is_valid, message = is_valid_positive_whole_number(value)
     if not is_valid:
         return False, message
-    if is_full_time and float(value) <= 20000:
-        return False, "Full time employees must earn more than 20000."
-    if not is_full_time and float(value) < 10000:
+    if float(value) < 10000:
         return False, "Part time employees must earn more than 10000."
     return True, ""
 
