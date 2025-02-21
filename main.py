@@ -17,15 +17,15 @@ def main_menu():
             elif choice == "4":
                 delete_employee()
             elif choice == "5":
-                print("\nExiting the program...")
+                print("\nExiting the program...\n")
                 break
             else:
-                print("Invalid choice. Please try again.")
+                print("Invalid choice. Please try again.\n")
         except ReturnToMenuException:
             print("\nReturning to the main menu...\n")
             continue
         except KeyboardInterrupt:
-            print("\nExiting the program...")
+            print("\nExiting the program...\n")
             break
 
 def fetch_and_display_employees():
@@ -34,11 +34,16 @@ def fetch_and_display_employees():
         print("\nNo employees found.")
         return
     display_employees(employees)
-    index = int(get_input("\nEnter the index of the employee to focus on: ")) - 1
-    if index < 0 or index >= len(employees):
-        print("Invalid index. Please try again.")
-        return
-    display_single_employee(employees[index], index + 1)
+    while True:
+        user_input = get_input("\nEnter the index of the employee to focus on: ").strip()
+        try:
+            index = int(user_input) - 1
+            if index < 0 or index >= len(employees):
+                print("Invalid index. Please try again.\n")
+            else:
+                display_single_employee(employees[index], index + 1)
+        except ValueError:
+            print("Invalid input. Please enter a valid index or 'exit' to quit.\n")
 
 def create_employee():
     print("\nCreate New Employee\n")
@@ -71,25 +76,20 @@ def update_employee():
     if not employees:
         print("\nNo employees found.")
         return
-
     display_employees(employees)
     index = get_valid_index("\nEnter the index of the employee to update: ", employees)
-
     employee = employees[index]
     display_single_employee(employee, index + 1)
     update_options()
-
     while True:
         choice = get_input("Enter the number of the attribute to update: ")
         update_field = map_update_choice_to_field(choice)
         if update_field:
             break
         print("Invalid choice. Please try again.")
-
     new_value = get_new_value(update_field)
     find_and_update_employee(employee["_id"], update_field, new_value)
-    print("\n")
-    print(f"Employee {employee['email']} updated successfully!")
+    print(f"\nEmployee {employee['email']} updated successfully!")
 
 
 def delete_employee():
@@ -103,4 +103,4 @@ def delete_employee():
 
     employee = employees[index]
     del_employee(employee["_id"])
-    print(f"Employee {employee['email']} deleted successfully!")
+    print(f"\nEmployee {employee['email']} deleted successfully!")

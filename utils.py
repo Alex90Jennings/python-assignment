@@ -1,5 +1,5 @@
 from consts import diet_preferences
-from validators import is_valid_leave_days, is_valid_salary
+from validators import is_valid_email, is_valid_leave_days, is_valid_name, is_valid_salary
 
 class ReturnToMenuException(Exception):
     pass
@@ -60,7 +60,8 @@ def get_new_value(update_field):
         prompt = f"Enter the new value for {update_field.replace('annualLeaveDays', 'annual leave days')}: "
         return get_valid_input(prompt.strip(), validation_func)
 
-    return get_input(f"Enter the new value for {update_field}: ").strip()
+    validation_func = is_valid_email if update_field == "email" else is_valid_name
+    return get_valid_input((f"Enter the new value for {update_field}: ").strip(), validation_func)
 
 def select_diet_preferences():
     print("\nAvailable Diet Preferences:")
@@ -78,6 +79,9 @@ def select_diet_preferences():
                 continue
             if any(num < 1 or num > len(diet_preferences) for num in selected_numbers):
                 print("One or more selected numbers are out of range. Please try again.")
+                continue
+            if len(selected_numbers) == 2 and selected_numbers[0] == selected_numbers[1]:
+                print("You cannot select the same preference twice. Please try again.")
                 continue
             return [diet_preferences[num - 1] for num in selected_numbers]
         except ValueError:
