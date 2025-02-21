@@ -1,0 +1,1 @@
+diet_preferences = ["Vegan", "Vegetarian", "Halal", "Kosher", "Paleo", "Gluten-Free", "Dairy-Free", "Low-Carb", "Keto"]
