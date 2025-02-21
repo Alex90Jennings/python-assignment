@@ -3,7 +3,6 @@ from console import display_employees, display_single_employee, main_options, up
 from utils import ReturnToMenuException, get_input, get_new_value, map_update_choice_to_field, select_diet_preferences
 from validators import is_valid_email, is_valid_leave_days, is_valid_name, is_valid_salary
 
-
 def main_menu():
     while True:
         try:
@@ -123,8 +122,6 @@ def update_employee():
         print(f"Employee {employee['email']} updated successfully!")
     except ValueError:
         print("Invalid input. Please enter a valid number.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
 
 def delete_employee():
     employees = get_employees()
