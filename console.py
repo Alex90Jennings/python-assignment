@@ -21,7 +21,10 @@ def update_options():
 
 def display_single_employee(employee, index):
     print("\nEmployee Details:\n")
-    print_employee_details(employee, index)
+    print_separator("-")
+    print(get_table_headers())
+    print_separator("-")
+    print(print_employee_details(employee, index))
 
 def display_employees(employees):
     print("\n")
