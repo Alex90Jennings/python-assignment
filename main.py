@@ -20,7 +20,8 @@ def main_menu():
                 print("\nExiting the program...\n")
                 break
             else:
-                print("Invalid choice. Please try again.\n")
+                if choice != ":menu":
+                    print("Invalid choice. Please try again.\n")
         except ReturnToMenuException:
             print("\nReturning to the main menu...\n")
             continue

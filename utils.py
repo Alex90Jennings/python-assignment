@@ -23,7 +23,7 @@ def get_valid_choice(prompt, choices):
         choice = get_input(prompt).strip().lower()
         if choice in choices:
             return choice
-        print(f"Invalid input. Please enter one of {choices}.")
+        print(f"Invalid input. Please enter one of {' or '.join(choices)}.")
 
 def get_valid_index(prompt, items):
     while True:
@@ -85,4 +85,4 @@ def select_diet_preferences():
                 continue
             return [diet_preferences[num - 1] for num in selected_numbers]
         except ValueError:
-            print("Invalid input. Please enter valid numbers.")
+            print("Invalid input. Please enter valid numbers, separated by commas.")
