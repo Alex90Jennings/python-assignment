@@ -56,7 +56,6 @@ def fetch_and_display_employees():
 
 def create_employee():
     print("\nCreate New Employee\n")
-    
     first_name = get_valid_input("Enter First Name: ", is_valid_name)
     last_name = get_valid_input("Enter Last Name: ", is_valid_name)
     email = get_valid_input("Enter Email: ", is_valid_email)
