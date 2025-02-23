@@ -91,8 +91,7 @@ def update_employee():
             break
         print("Invalid choice. Please try again.")
     new_value = get_updated_value_by_update_field(update_field)
-    old_value = employee.get(update_field)
-    if old_value == new_value:
+    if employee.get(update_field)== new_value:
         print(f"The {update_field} value is already up-to-date")
     else:
         find_and_update_employee(employee["_id"], update_field, new_value)
