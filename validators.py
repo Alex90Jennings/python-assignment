@@ -1,7 +1,6 @@
-import random
 import re
-from datetime import datetime, timedelta
-from api import find_and_update_employee, get_employee
+from datetime import datetime
+from api import get_employee
 from consts import diet_preferences
 
 def is_valid_name(name):

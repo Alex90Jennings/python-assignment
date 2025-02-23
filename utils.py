@@ -4,76 +4,58 @@ from validators import is_valid_date, is_valid_email, is_valid_leave_days, is_va
 class ReturnToMenuException(Exception):
     pass
 
-def get_input(prompt):
+def get_input_with_menu_exception(prompt):
     user_input = input(prompt).strip()
     if user_input.lower() == ":menu":
         raise ReturnToMenuException
     return user_input
 
-def get_valid_input(prompt, validation_func):
+def get_valid_number_or_string_input(prompt, validation_func):
     while True:
-        value = get_input(prompt).strip()
+        value = get_input_with_menu_exception(prompt).strip()
         is_valid, error_msg = validation_func(value)
         if is_valid:
             return value
         print(error_msg)
 
-def get_valid_choice(prompt, choices):
+def get_valid_boolean_input(prompt):
     while True:
-        choice = get_input(prompt).strip().lower()
-        if choice in choices:
+        choice = get_input_with_menu_exception(prompt).strip().lower()
+        boolean_values = ['true', 'false']
+        if choice in boolean_values:
             return choice
-        print(f"Invalid input. Please enter one of {' or '.join(choices)}.")
+        print(f"Invalid input. Please enter one of {' or '.join(boolean_values)}.")
 
 def get_valid_index(prompt, items):
     while True:
         try:
-            index = int(get_input(prompt)) - 1
+            index = int(get_input_with_menu_exception(prompt)) - 1
             if 0 <= index < len(items):
                 return index
             print("Invalid index. Please try again.")
         except ValueError:
             print("Invalid input. Please enter a valid number.")
 
-def map_update_choice_to_field(choice):
-    field_map = {
-        "1": "firstName",
-        "2": "lastName",
-        "3": "email",
-        "4": "isFullTime",
-        "5": "isActive",
-        "6": "salary",
-        "7": "annualLeaveDays",
-        "8": "dateJoined",
-        "9": "dietPreferences"
-    }
-    return field_map.get(choice)
-
-def updated_value(update_field):
+def get_updated_value_by_update_field(update_field):
     if update_field == "dietPreferences":
         return select_diet_preferences()
-    
     if update_field == "dateJoined":
         return select_date_joined()
-
     if update_field in ["isFullTime", "isActive"]:
-        return get_valid_choice(f"Enter the new value for {update_field} (true/false): ", ["true", "false"]) == "true"
-
+        return get_valid_boolean_input(f"Enter the new value for {update_field} (true/false): ") == "true"
     if update_field in ["salary", "annualLeaveDays"]:
         validation_func = is_valid_salary if update_field == "salary" else is_valid_leave_days
         prompt = f"Enter the new value for {update_field.replace('annualLeaveDays', 'annual leave days')}: "
-        return get_valid_input(prompt.strip(), validation_func)
-
+        return get_valid_number_or_string_input(prompt.strip(), validation_func)
     validation_func = is_valid_email if update_field == "email" else is_valid_name
-    return get_valid_input((f"Enter the new value for {update_field}: ").strip(), validation_func)
+    return get_valid_number_or_string_input((f"Enter the new value for {update_field}: ").strip(), validation_func)
 
 def select_diet_preferences():
     print("\nAvailable Diet Preferences:")
     for i, preference in enumerate(diet_preferences, start=1):
         print(f"{i}. {preference}")
-
     while True:
-        user_input = get_input("Enter the numbers of diet preferences (separate by commas, up to 2): ").strip()
+        user_input = get_input_with_menu_exception("Enter the numbers of diet preferences, separated by commas, up to 2 numbers. For example: 1,8): ").strip()
         if not user_input:
             return []
         try:
