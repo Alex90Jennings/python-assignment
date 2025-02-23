@@ -59,17 +59,17 @@ def select_diet_preferences():
         if not user_input:
             return []
         try:
-            selected_numbers = [int(num.strip()) for num in user_input.split(',')]
-            if not (0 <= len(selected_numbers) <= 2):
+            selected_indices = [int(num.strip()) for num in user_input.split(',')]
+            if not (0 <= len(selected_indices) <= 2):
                 print("You must select between 0 and 2 preferences.")
                 continue
-            if any(num < 1 or num > len(diet_preferences) for num in selected_numbers):
+            if any(num < 1 or num > len(diet_preferences) for num in selected_indices):
                 print("One or more selected numbers are out of range. Please try again.")
                 continue
-            if len(selected_numbers) == 2 and selected_numbers[0] == selected_numbers[1]:
+            if len(selected_indices) == 2 and selected_indices[0] == selected_indices[1]:
                 print("You cannot select the same preference twice. Please try again.")
                 continue
-            return [diet_preferences[num - 1] for num in selected_numbers]
+            return [diet_preferences[num - 1] for num in selected_indices]
         except ValueError:
             print("Invalid input. Please enter valid numbers, separated by commas.")
 

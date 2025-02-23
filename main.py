@@ -3,7 +3,7 @@ from api import del_employee, find_and_update_employee, get_employees, insert_em
 from console import display_employees, display_single_employee, main_options, update_options
 from utils import ReturnToMenuException, get_updated_value_by_update_field, select_diet_preferences, get_valid_boolean_input, get_valid_index, get_valid_number_or_string_input
 from validators import is_valid_email, is_valid_employee, is_valid_leave_days, is_valid_name, is_valid_salary
-from consts import emnployee_attributes
+from consts import employee_attributes
 
 def main_menu():
     while True:
@@ -32,16 +32,12 @@ def main_menu():
             break
 
 def get_valid_employees():
-    fetched_employees = get_employees()
-    if not fetched_employees:
+    employees = [emp for emp in get_employees() if is_valid_employee(emp)]
+    if not employees:
         print("\nNo employees found.")
-        return
-    employees = []
-    for employee in fetched_employees:
-        valid_employee = is_valid_employee(employee)
-        if valid_employee:
-            employees.append(valid_employee)
+        return []
     return employees
+
 
 def fetch_and_display_employees():
     employees = get_valid_employees()
@@ -71,7 +67,7 @@ def create_employee():
         "dateJoined": datetime.today().strftime("%d/%m/%Y")
     }
     valid_employee = is_valid_employee(employee)
-    if employee:
+    if valid_employee:
         insert_employee(valid_employee)
         print(f"\nEmployee with {email} created successfully!")
     else:
@@ -85,13 +81,13 @@ def update_employee():
     display_single_employee(employee, index + 1)
     update_options()
     while True:
-        choice = get_valid_index("Enter the number of the attribute to update: ", emnployee_attributes)
-        update_field = emnployee_attributes[choice]
+        choice = get_valid_index("Enter the number of the attribute to update: ", employee_attributes)
+        update_field = employee_attributes[choice]
         if update_field:
             break
         print("Invalid choice. Please try again.")
     new_value = get_updated_value_by_update_field(update_field)
-    if employee.get(update_field)== new_value:
+    if employee[update_field] == new_value:
         print(f"The {update_field} value is already up-to-date")
     else:
         find_and_update_employee(employee["_id"], update_field, new_value)

@@ -75,19 +75,20 @@ def is_valid_positive_whole_number(value):
         return False, "Value must be a number."
     
 def is_valid_employee(employee):
-    validations = {
-        "firstName": (is_valid_name, "firstName"),
-        "lastName": (is_valid_name, "lastName"),
-        "email": (is_valid_email, "email"),
-        "isFullTime": (is_valid_boolean, "isFullTime"),
-        "isActive": (is_valid_boolean, "isActive"),
-        "salary": (is_valid_salary, "salary"),
-        "annualLeaveDays": (is_valid_leave_days, "annualLeaveDays"),
-        "dietPreferences": (is_valid_diet_preference, "dietPreferences"),
-        "dateJoined": (is_valid_date, "dateJoined")
+    field_validations = {
+        "firstName": is_valid_name,
+        "lastName": is_valid_name,
+        "email": is_valid_email,
+        "isFullTime": is_valid_boolean,
+        "isActive": is_valid_boolean,
+        "salary": is_valid_salary,
+        "annualLeaveDays": is_valid_leave_days,
+        "dietPreferences": is_valid_diet_preference,
+        "dateJoined": is_valid_date
     }
-    for field, (validator, field_name) in validations.items():
-        if not validator(employee.get(field)):
-            print(f"Employee with {employee.get('_id', 'unknown ID')} could not be loaded, as {field_name} was not in the correct format.")
+    for field, validator in field_validations.items():
+        is_valid, error_message = validator(employee.get(field))
+        if not is_valid:
+            print(f"Error: Employee with ID {employee.get('_id', 'unknown')} is invalid - {field}: {error_message}")
             return None
     return employee
