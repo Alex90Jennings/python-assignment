@@ -1,6 +1,7 @@
+import datetime
 from api import del_employee, find_and_update_employee, get_employees, insert_employee
 from console import display_employees, display_single_employee, main_options, update_options
-from utils import ReturnToMenuException, get_input, get_new_value, map_update_choice_to_field, select_diet_preferences, get_valid_choice, get_valid_index, get_valid_input
+from utils import ReturnToMenuException, get_input, updated_value, map_update_choice_to_field, select_diet_preferences, get_valid_choice, get_valid_index, get_valid_input
 from validators import is_valid_email, is_valid_employee, is_valid_leave_days, is_valid_name, is_valid_salary
 
 def main_menu():
@@ -72,7 +73,8 @@ def create_employee():
         "isActive": True,
         "salary": salary,
         "annualLeaveDays": annual_leave,
-        "dietPreferences": diet_preferences
+        "dietPreferences": diet_preferences,
+        "dateJoined": datetime.today().strftime("%d/%m/%Y"),
     }
     valid_employee = is_valid_employee(employee)
     if employee:
@@ -94,7 +96,7 @@ def update_employee():
         if update_field:
             break
         print("Invalid choice. Please try again.")
-    new_value = get_new_value(update_field)
+    new_value = updated_value(update_field)
     find_and_update_employee(employee["_id"], update_field, new_value)
     print(f"\nEmployee {employee['email']} updated successfully!")
 

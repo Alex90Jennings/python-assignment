@@ -1,12 +1,12 @@
-def print_separator(symbol, length=158):
+def print_separator(symbol, length=170):
     print(symbol * length)
 
 def print_employee_details(employee, index):
     diet_prefs = ", ".join(employee.get('dietPreferences', []))
-    return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{diet_prefs}"
+    return f"{index:<8}{employee.get('firstName', 'N/A'):<15}{employee.get('lastName', 'N/A'):<15}{employee.get('email', 'N/A'):<40}{str(employee.get('isFullTime', 'N/A')):<14}{str(employee.get('isActive', 'N/A')):<10}{str(employee.get('salary', 'N/A')):<14}{str(employee.get('annualLeaveDays', 'N/A')):<15}{employee.get('dateJoined', 'N/A'):<12}{diet_prefs}"
 
 def get_table_headers():
-    return f"{'Index':<8}{'First Name':<15}{'Last Name':<15}{'Email':<40}{'Full Time':<14}{'Active':<10}{'Salary (£)':<14}{'Annual Leave':<15}{'Diet Preferences'}"
+    return f"{'Index':<8}{'First Name':<15}{'Last Name':<15}{'Email':<40}{'Full Time':<14}{'Active':<10}{'Salary (£)':<14}{'Annual Leave':<15}{'Date Joined':<12}{'Diet Preferences'}"
 
 def update_options():
     print("\nWhat would you like to update?\n")
@@ -17,7 +17,8 @@ def update_options():
     print("5. Active")
     print("6. Salary")
     print("7. Annual Leave")
-    print("8. Diet Preferences\n")
+    print("8. Date Joined")
+    print("9. Diet Preferences\n")
 
 def display_single_employee(employee, index):
     print("\nEmployee Details:\n")

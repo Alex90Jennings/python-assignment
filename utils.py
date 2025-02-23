@@ -1,5 +1,5 @@
 from consts import diet_preferences
-from validators import is_valid_email, is_valid_leave_days, is_valid_name, is_valid_salary
+from validators import is_valid_date, is_valid_email, is_valid_leave_days, is_valid_name, is_valid_salary
 
 class ReturnToMenuException(Exception):
     pass
@@ -44,13 +44,17 @@ def map_update_choice_to_field(choice):
         "5": "isActive",
         "6": "salary",
         "7": "annualLeaveDays",
-        "8": "dietPreferences"
+        "8": "dateJoined",
+        "9": "dietPreferences"
     }
     return field_map.get(choice)
 
-def get_new_value(update_field):
+def updated_value(update_field):
     if update_field == "dietPreferences":
         return select_diet_preferences()
+    
+    if update_field == "dateJoined":
+        return select_date_joined()
 
     if update_field in ["isFullTime", "isActive"]:
         return get_valid_choice(f"Enter the new value for {update_field} (true/false): ", ["true", "false"]) == "true"
@@ -86,3 +90,11 @@ def select_diet_preferences():
             return [diet_preferences[num - 1] for num in selected_numbers]
         except ValueError:
             print("Invalid input. Please enter valid numbers, separated by commas.")
+
+def select_date_joined():
+    while True:
+        date_input = input("Enter the new date joined (dd/mm/yyyy): ").strip()
+        is_valid, message = is_valid_date(date_input)
+        if is_valid:
+            return date_input
+        print(f"Invalid date. {message} Please try again.")

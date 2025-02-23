@@ -1,5 +1,7 @@
+import random
 import re
-from api import get_employee
+from datetime import datetime, timedelta
+from api import find_and_update_employee, get_employee
 from consts import diet_preferences
 
 def is_valid_name(name):
@@ -48,6 +50,20 @@ def is_valid_boolean(value):
         return True, ""
     return False, "Must be either 'true', 'false'"
 
+def is_valid_date(value):
+    if not value:
+        return False, "Date cannot be empty or None."
+    try:
+        date = datetime.strptime(value, "%d/%m/%Y")
+        today = datetime.today()
+        if date > today:
+            return False, "Date cannot be in the future."
+        if date.year < 2022:
+            return False, "Date cannot be before the year 2022."
+        return True, ""
+    except ValueError:
+        return False, "Invalid date format. Use dd/mm/yyyy."
+
 def is_valid_positive_whole_number(value):
     try:
         num = float(value)
@@ -68,7 +84,8 @@ def is_valid_employee(employee):
         "isActive": (is_valid_boolean, "isActive"),
         "salary": (is_valid_salary, "salary"),
         "annualLeaveDays": (is_valid_leave_days, "annualLeaveDays"),
-        "dietPreferences": (is_valid_diet_preference, "dietPreferences")
+        "dietPreferences": (is_valid_diet_preference, "dietPreferences"),
+        "dateJoined": (is_valid_date, "dateJoined")
     }
     for field, (validator, field_name) in validations.items():
         if not validator(employee.get(field)):
