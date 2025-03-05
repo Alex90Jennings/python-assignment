@@ -32,4 +32,10 @@ The application has CRUD operations to a database hosted on mongo db.
 
 ## Testing
 
-Run pytest -v tests.py to execute the pytest testing suite unit tests of the input validators
+Run 
+
+```bash
+pytest -v tests.py 
+```
+
+in order to execute the pytest testing suite unit tests of the input validators
