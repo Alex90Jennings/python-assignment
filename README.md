@@ -31,3 +31,5 @@ Diet Preferences: A list of between 0 and 2 pre-defined possible diet preference
 The application has CRUD operations to a database hosted on mongo db.
 
 ## Testing
+
+Run pytest -v tests.py to execute the pytest testing suite unit tests of the input validators
