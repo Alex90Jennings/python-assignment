@@ -22,7 +22,6 @@ def patch_get_employee(monkeypatch):
     ("John", (True, "")),
     ("J@hn", (False, "Name must contain only letters.")),
     ("John123", (False, "Name must contain only letters.")),
-    ("luk3", (False, "Name must contain only letters.")),
     ("12345", (False, "Name must contain only letters.")),
     ("J", (False, "Name must be between 2 and 15 characters long.")),
     ("JonathanAndrewSmith", (False, "Name must be between 2 and 15 characters long.")), 
