@@ -4,7 +4,8 @@ from pymongo import MongoClient
 from bson import ObjectId
 
 load_dotenv()
-uri = os.getenv('MONGO_URI')
+# uri = os.getenv('MONGO_URI')
+uri = "mongodb+srv://aj0312:nIO4vn2Z51eIuFDa@cluster0.wdg7z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri)
 db = client["python-assignment"]
 collection = db["users"]
