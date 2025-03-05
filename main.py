@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from api import del_employee, find_and_update_employee, get_employees, insert_employee
 from console import display_employees, display_single_employee, main_options, update_options
 from utils import ReturnToMenuException, get_updated_value_by_update_field, select_diet_preferences, get_valid_boolean_input, get_valid_index, get_valid_number_or_string_input

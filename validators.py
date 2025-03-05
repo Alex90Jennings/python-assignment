@@ -78,12 +78,10 @@ def is_valid_employee(employee):
     field_validations = {
         "firstName": is_valid_name,
         "lastName": is_valid_name,
-        "email": is_valid_email,
         "isFullTime": is_valid_boolean,
         "isActive": is_valid_boolean,
         "salary": is_valid_salary,
         "annualLeaveDays": is_valid_leave_days,
-        "dietPreferences": is_valid_diet_preference,
         "dateJoined": is_valid_date
     }
     for field, validator in field_validations.items():
